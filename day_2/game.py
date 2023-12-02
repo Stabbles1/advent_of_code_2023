@@ -31,3 +31,10 @@ class Game:
             if turn.red > max_red or turn.green > max_green or turn.blue > max_blue:
                 return False
         return True
+
+    def get_power(self):
+        return (
+            max([turn.red for turn in self.turns])
+            * max([turn.green for turn in self.turns])
+            * max([turn.blue for turn in self.turns])
+        )
