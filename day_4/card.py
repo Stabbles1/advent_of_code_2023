@@ -13,8 +13,14 @@ class Card:
         else:
             self.score = self.score * 2
 
-    def calculate_score(self) -> int:
+    def calculate_score_p1(self) -> int:
         for number in self.our_numbers:
             if number in self.winning_numbers:
                 self.double_score()
+        return self.score
+    
+    def calculate_score_p2(self) -> int:
+        for number in self.our_numbers:
+            if number in self.winning_numbers:
+                self.score += 1
         return self.score
