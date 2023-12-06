@@ -3,9 +3,14 @@ import re
 from map import MapRange
 
 
-def read_seeds(line:str) -> list[int]:
-    regex_result = re.search(r':\s+(.*)', line).group(1)
-    return [int(seed) for seed in regex_result.split(" ")]
+def read_seeds(line:str) -> list[tuple[int, int]]:
+    seed_ranges = []
+    regex_result = re.findall(r'(\d+) (\d+)', line)
+    for match in regex_result:
+        print(match)
+        t = int(match[0]), int(match[1])
+        seed_ranges.append(t)
+    return seed_ranges
 
 def read_maps(lines:list[str]) -> dict[list[map]]:
     all_maps = {}
