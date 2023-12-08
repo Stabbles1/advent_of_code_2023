@@ -1,6 +1,5 @@
 from main_p1 import solve as p1_solve
-
-# from main_p2 import solve as p2_solve
+from main_p2 import solve as p2_solve
 
 lines = [
 "32T3K 765",
@@ -15,5 +14,5 @@ def test_p1():
 
 
 
-# def test_p2():
-#     assert p2_solve(times=[71530], distances=[940200]) == 71503
+def test_p2():
+    assert p2_solve(lines) == 5905
