@@ -38,3 +38,16 @@ class History:
             tier.append(tier[-1] + self.tiers[current_tier_numer+1][-1])
             current_tier_numer -= 1
         return self.tiers[0][-1]
+    
+    def extrapolate_back(self) -> int:
+        # Add a zero to the bottom tier
+        current_tier_numer = -1
+        for tier in self.tiers[::-1]:
+            if current_tier_numer == -1:
+                tier.append(0)
+                current_tier_numer -= 1
+                continue
+            tier.insert(0, tier[0] - self.tiers[current_tier_numer+1][0])
+            current_tier_numer -= 1
+        print(self.tiers)
+        return self.tiers[0][0]
