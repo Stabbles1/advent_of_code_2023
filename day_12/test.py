@@ -38,6 +38,8 @@ def test_simplify_2():
 
 def test_p1():
     assert p1_solve([lines[0]]) == 1
+
+def test_p1_full():
     assert p1_solve(lines) == 21
 
 # def test_p2():

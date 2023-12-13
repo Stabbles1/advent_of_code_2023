@@ -2,6 +2,7 @@ import copy
 import itertools
 import json
 import re
+import time
 from functools import cache
 
 
@@ -11,26 +12,25 @@ def read_input(filename: str) -> list[str]:
     
 @cache
 def is_valid(combo:str, candidate: str, broken:str) -> bool:
-    candidate=json.loads(candidate)
     combo=json.loads(combo)
     broken=json.loads(broken)
-    for n in combo:
-        candidate[n] = "#"
-    # Reconstruct the string
-    sping_string = ""
-    for spring in candidate:
-        if spring == "?":
-            sping_string += "."
-        else: 
-            sping_string += spring
+    final_spring = ""
+    for i, spring in enumerate(candidate):
+        if i in combo:
+            final_spring += "#"
+        elif spring == "?":
+            final_spring += "."
+        else:
+            final_spring += spring
+
     try:
-        result = re.findall(r'(?:^|\.)*(#+)(?:\.|$)', sping_string)
+        result = re.findall(r'(?:^|\.)*(#+)(?:\.|$)', final_spring)
         assert len(result) == len(broken)
         for i in range(0, len(result)):
             assert len(result[i]) == broken[i]
     except AssertionError:
         return False
-    return sping_string
+    return final_spring
 
 def num_of_valid_combinations(layout: str, broken:list[int]) -> int:
     broken_total = sum(broken)
@@ -52,8 +52,8 @@ def num_of_valid_combinations(layout: str, broken:list[int]) -> int:
         if len(set(combo)) != len(combo):
             continue
         combo = sorted(list(combo))
-        if is_valid(json.dumps(combo), json.dumps(layout_list), json.dumps(broken)) != False:
-            valid_combinations.add(is_valid(json.dumps(combo), json.dumps(layout_list), json.dumps(broken)))
+        if is_valid(json.dumps(combo), layout, json.dumps(broken)) != False:
+            valid_combinations.add(is_valid(json.dumps(combo), layout, json.dumps(broken)))
     return len(valid_combinations)
 
 def parse_line(line) -> tuple[str, list[int]]:
@@ -97,7 +97,9 @@ def solve(lines) -> int:
     total = 0
     for line in lines:
         simplified, broken = simplify(*parse_line(line))
+        start = time.time()
         total += num_of_valid_combinations(simplified, broken)
+        print(f"Took {time.time() - start}")
     return total
     
 
