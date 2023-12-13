@@ -11,18 +11,23 @@ def read_input(filename: str) -> list[str]:
         return f.read().splitlines()
 
 @cache
-def is_valid(combo:str, candidate: str, broken:str) -> bool:
-    combo=json.loads(combo)
+def is_valid(combo:str, candidate: str, broken:str, num_of_unknown_locations:int) -> bool:
     broken=json.loads(broken)
     final_spring = ""
-    for i, spring in enumerate(candidate):
-        if spring == "?" and i in combo:
-            final_spring += "#"
-        elif spring == "?":
-            final_spring += "."
+    unknowns_encountered = 0
+    loop_counter = 0
+    while loop_counter < len(candidate):
+        if candidate[loop_counter] == "?":
+            if combo[unknowns_encountered] == "1":
+                final_spring += "#"
+            else:
+                final_spring += "."
+            unknowns_encountered += 1
         else:
-            final_spring += spring
+            final_spring += candidate[loop_counter]
+        loop_counter += 1
 
+    
     try:
         result = re.findall(r'(?:^|\.)*(#+)(?:\.|$)', final_spring)
         assert len(result) == len(broken)
@@ -48,12 +53,10 @@ def num_of_valid_combinations(layout: str, broken:list[int]) -> int:
 
     valid_combinations = set()
     broken_str = json.dumps(broken)
-    for combo in itertools.product(unknown_locations, repeat=number_of_brokens_to_place):
-        # Make sure there are no dupes in the combo
-        if len(set(combo)) != number_of_brokens_to_place:
-            continue
-        combo = sorted(list(combo))
-        result = is_valid(json.dumps(combo), layout, broken_str)
+    num_of_unknown_locations = len(unknown_locations)
+    formatter = '0' + str(num_of_unknown_locations) + 'b'
+    for binint in range(0, 2**num_of_unknown_locations):
+        result = is_valid(format(binint, formatter), layout, broken_str, num_of_unknown_locations)
         if result != False:
             valid_combinations.add(result)
     return len(valid_combinations)
