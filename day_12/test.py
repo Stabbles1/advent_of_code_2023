@@ -1,7 +1,6 @@
 from main_p1 import is_valid, parse_line, simplify
 from main_p1 import solve as p1_solve
-
-#from main_p2 import solve as p2_solve
+from main_p2 import solve as p2_solve
 
 lines = [
     "???.### 1,1,3",
@@ -42,5 +41,11 @@ def test_p1():
 def test_p1_full():
     assert p1_solve(lines) == 21
 
-# def test_p2():
-#     assert p2_solve(lines) == 2
+def test_p2():
+    assert p2_solve([lines[0]]) == 1
+
+def test_p2_2():
+    assert p2_solve([lines[1]]) == 16384
+
+# def test_p2_full():
+#     assert p2_solve(lines) == 525152
