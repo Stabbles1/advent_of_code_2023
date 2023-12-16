@@ -7,12 +7,11 @@ class Pattern:
     grid: list[str]
 
     @staticmethod
-    def get_candidate_reflections(l: str) -> list[int]:
+    def get_candidate_reflections(l: str, remaining_candidates: list[int]) -> list[int]:
         # Can be optimised by passing in the remaining candidates
         #print(l)
         candidates = []
-        line_length = len(l)
-        for mirror_index in range(1,line_length):
+        for mirror_index in remaining_candidates:
             left = l[:mirror_index]
             right = l[mirror_index:]
             smallest_list = min(len(left), len(right))
@@ -30,39 +29,34 @@ class Pattern:
 
 
     def find_vertical_reflection(self) -> int:
-        remaining_candidates = None
+        remaining_candidates = list(range(1, len(self.grid[0])))
         for line in self.grid:
-            if remaining_candidates == None:
-                remaining_candidates = self.get_candidate_reflections(line)
-            else:
-                new_candidates = self.get_candidate_reflections(line)
-                remaining_candidates = list(set(remaining_candidates).intersection(new_candidates))
+            new_candidates = self.get_candidate_reflections(line, remaining_candidates)
+            remaining_candidates = list(set(remaining_candidates).intersection(new_candidates))
             if remaining_candidates == []:
                 raise IndexError
 
         if len(remaining_candidates) > 1:
-            raise Exception("This should never happen")
+            raise Exception(f"This should never happen {remaining_candidates} {self}")
         return remaining_candidates[0]
     
     def find_horizontal_reflection(self) -> int:
-        remaining_candidates = None
         constructed_lines = []
         for x in range(0, len(self.grid[0])):
             constructed_lines.append("")
             for y in range(0, len(self.grid)):
                 constructed_lines[x] += self.grid[y][x]
+
+        remaining_candidates = list(range(1, len(constructed_lines[0])))
         
         for line in constructed_lines:
-            if remaining_candidates == None:
-                remaining_candidates = self.get_candidate_reflections(line)
-            else:
-                new_candidates = self.get_candidate_reflections(line)
-                remaining_candidates = list(set(remaining_candidates).intersection(new_candidates))
+            new_candidates = self.get_candidate_reflections(line, remaining_candidates)
+            remaining_candidates = list(set(remaining_candidates).intersection(new_candidates))
             if remaining_candidates == []:
                 raise IndexError
 
         if len(remaining_candidates) > 1:
-            raise Exception("This should never happen")
+            raise Exception(f"This should never happen {remaining_candidates} {self}")
         return remaining_candidates[0]
         
 

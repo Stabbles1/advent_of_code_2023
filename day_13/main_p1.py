@@ -1,3 +1,5 @@
+import time
+
 from pattern import Pattern
 
 
@@ -18,10 +20,12 @@ def get_patterns(lines) -> list[Pattern]:
     return patterns
 
 def solve(lines):
+    start = time.time()
     patterns = get_patterns(lines)
     total_value = 0
     for pattern in patterns:
         total_value += pattern.value()
+    print(f"Time taken: {time.time() - start}")
     return total_value
     
 
