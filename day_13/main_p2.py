@@ -24,7 +24,7 @@ def solve(lines):
     patterns = get_patterns(lines)
     total_value = 0
     for pattern in patterns:
-        result = pattern.value()
+        result = pattern.smudgeless_value()
         if result is None:
             result = 0
         total_value += result
