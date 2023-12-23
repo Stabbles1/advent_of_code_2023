@@ -80,14 +80,13 @@ class Graph:
             self.tiles[new_location[0:2]] = RGB(rgb)
             self.current_location = new_location
 
-    def fill_direction(self, step, x_delta, y_delta):
-        while True:
-            candidate = (step[0] + x_delta, step[1] + y_delta)
-            if candidate in self.tiles:
-                return
-            else:
-                self.tiles[candidate] = RGB("Lava")
-                step = candidate
+    def fill_surroundings(self, x, y):
+        if (x, y) not in self.tiles:
+            self.tiles[(x, y)] = RGB("Lava")
+            self.fill_surroundings(x + 1, y)
+            self.fill_surroundings(x - 1, y)
+            self.fill_surroundings(x, y + 1)
+            self.fill_surroundings(x, y - 1)
 
     def __str__(self):
         s = ""
@@ -104,33 +103,15 @@ class Graph:
         # This only works for right hand loops. Test and actual are both right
         print(self.left_counter)
         print(self.right_counter)
-        for step_count, step in enumerate(self.route):
-            if step[2] == "R":
-                self.fill_direction(step, 0, -1)
-            elif step[2] == "D":
-                self.fill_direction(step, -1, 0)
-            elif step[2] == "L":
-                self.fill_direction(step, 0, 1)
-            elif step[2] == "U":
-                self.fill_direction(step, 1, 0)
-
-            # Now check for corners
-            if step_count == 0:
-                continue
-            if step[2] != self.route[step_count - 1][2]:
-                # We have changed direction
-                previous_direction = self.route[step_count - 1][2]
-                current_direction = step[2]
-                if previous_direction == "L":
-                    if current_direction == "D":
-                        self.fill_direction(self.route[step_count - 1], -1, 0)
-                elif previous_direction == "R":
-                    if current_direction == "U":
-                        self.fill_direction(self.route[step_count - 1], 1, 0)
-                elif previous_direction == "U":
-                    if current_direction == "L":
-                        self.fill_direction(self.route[step_count - 1], 0, 1)
-                elif previous_direction == "D":
-                    if current_direction == "R":
-                        self.fill_direction(self.route[step_count - 1], 0, -1)
-        return
+        for step in self.route:
+            try:
+                if step[2] == "R":
+                    self.fill_surroundings(step[0], step[1] - 1)
+                elif step[2] == "D":
+                    self.fill_surroundings(step[0] - 1, step[1])
+                elif step[2] == "L":
+                    self.fill_surroundings(step[0], step[1] + 1)
+                elif step[2] == "U":
+                    self.fill_surroundings(step[0] + 1, step[1])
+            except RecursionError:
+                pass  # Give it a break

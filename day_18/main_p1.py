@@ -1,4 +1,8 @@
+import sys
+
 from graph import Graph
+
+sys.setrecursionlimit(10000)
 
 
 def read_input(filename: str) -> list[str]:
