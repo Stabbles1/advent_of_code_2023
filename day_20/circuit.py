@@ -10,7 +10,6 @@ class Instruction:
     receiver: str
 
     def execute(self):
-        print(self)
         global lows, highs
         if self.signal == 0:
             board[self.receiver].receive_low_input()
@@ -82,6 +81,12 @@ class Conjunction(Gate):
 
     def receive_high_input(self):
         self.receive_input()
+
+    def __str__(self):
+        s = f"{self.name}: "
+        for input in self.inputs:
+            s += f"{input.name}={input.state} "
+        return s
 
 
 @dataclass
