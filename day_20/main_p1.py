@@ -1,4 +1,4 @@
-import gate
+import circuit as circuit
 
 
 def read_input(filename: str) -> list[str]:
@@ -8,22 +8,22 @@ def read_input(filename: str) -> list[str]:
 
 def push_button():
     print("-----Pushing------")
-    gate.action_list.append(
-        gate.Instruction(signal=0, sender="button", receiver="broadcaster")
+    circuit.action_list.append(
+        circuit.Instruction(signal=0, sender="button", receiver="broadcaster")
     )
-    while gate.action_list:
-        gate.action_list[0].execute()
-        gate.action_list.pop(0)
+    while circuit.action_list:
+        circuit.action_list[0].execute()
+        circuit.action_list.pop(0)
 
 
 def solve(lines):
     for line in lines:
-        gate.add_gate_to_circuit(line)
+        circuit.add_gate_to_circuit(line)
     for line in lines:
-        gate.add_outputs_to_gate(line)
+        circuit.add_outputs_to_gate(line)
     for _ in range(1000):
         push_button()
-    return gate.lows * gate.highs
+    return circuit.lows * circuit.highs
 
 
 if __name__ == "__main__":

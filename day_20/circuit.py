@@ -2,9 +2,6 @@ import re
 from abc import abstractmethod
 from dataclasses import dataclass, field
 
-lows = 0
-highs = 0
-
 
 @dataclass
 class Instruction:
@@ -16,18 +13,15 @@ class Instruction:
         print(self)
         global lows, highs
         if self.signal == 0:
-            circuit[self.receiver].receive_low_input()
+            board[self.receiver].receive_low_input()
             lows += 1
         else:
-            circuit[self.receiver].receive_high_input()
+            board[self.receiver].receive_high_input()
             highs += 1
 
     def __str__(self):
         hl = "low" if self.signal == 0 else "high"
         return f"{self.sender} -{hl}-> {self.receiver}"
-
-
-action_list: list[Instruction] = []
 
 
 @dataclass
@@ -107,20 +101,17 @@ class Broadcaster(Gate):
             self.state = 0
 
 
-circuit: dict[str, Gate] = {}
-
-
 def add_gate_to_circuit(line: str) -> None:
     matches = re.search(r"(\w+) \-\> (.*)", line)
     name = matches.group(1)
     outputs = matches.group(2)
 
     if line[0] == "&":
-        circuit[name] = Conjunction(name=name)
+        board[name] = Conjunction(name=name)
     elif line[0] == "%":
-        circuit[name] = FlipFlop(name=name)
+        board[name] = FlipFlop(name=name)
     elif line[0] == "b":
-        circuit[name] = Broadcaster(name=name)
+        board[name] = Broadcaster(name=name)
     else:
         raise NotImplementedError()
 
@@ -130,8 +121,14 @@ def add_outputs_to_gate(line: str) -> None:
     name = matches.group(1)
     outputs = matches.group(2)
     for output_name in outputs.split(", "):
-        if output_name not in circuit:
-            circuit[output_name] = Gate(name=output_name)
-        circuit[output_name].inputs.append(circuit[name])
-        circuit[name].outputs.append(circuit[output_name])
+        if output_name not in board:
+            board[output_name] = Gate(name=output_name)
+        board[output_name].inputs.append(board[name])
+        board[name].outputs.append(board[output_name])
     return
+
+
+board: dict[str, Gate] = {}
+action_list: list[Instruction] = []
+lows = 0
+highs = 0
